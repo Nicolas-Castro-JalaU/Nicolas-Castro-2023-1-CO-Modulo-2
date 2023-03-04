@@ -22,6 +22,7 @@ class Game:
         # Game loop: events - update - draw
         self.playing = True
         while self.playing:
+            print(self.clock)
             self.events()
             self.update()
             self.draw()
