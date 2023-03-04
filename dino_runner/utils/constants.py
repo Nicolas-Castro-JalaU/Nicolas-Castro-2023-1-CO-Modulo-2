@@ -1,5 +1,8 @@
 import pygame
 import os
+from pygame import mixer
+
+pygame.mixer.init()
 
 # Global Constants
 TITLE = "Chrome Dino Runner"
@@ -60,6 +63,10 @@ BIRD = [
     pygame.image.load(os.path.join(IMG_DIR, "Bird/Bird1.png")),
     pygame.image.load(os.path.join(IMG_DIR, "Bird/Bird2.png")),
 ]
+
+SOUNDS = [
+    pygame.mixer.Sound('dino_runner\\utils\\jump.wav')
+    ]
 
 CLOUD = pygame.image.load(os.path.join(IMG_DIR, 'Other/Cloud.png'))
 SHIELD = pygame.image.load(os.path.join(IMG_DIR, 'Other/shield.png'))
