@@ -4,6 +4,7 @@ import pygame
 from pygame import mixer  
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
 from dino_runner.components.dinosaur import Dinosaur
+from dino_runner.components.obstacle import Obstacle
 
 class Game:
     def __init__(self):
@@ -17,6 +18,7 @@ class Game:
         self.x_pos_bg = 0
         self.y_pos_bg = 380
         self.player = Dinosaur()
+        # self.obstacle = Obstacle()
 
 
 

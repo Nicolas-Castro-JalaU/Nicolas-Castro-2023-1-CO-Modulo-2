@@ -65,7 +65,7 @@ BIRD = [
 ]
 
 SOUNDS = [
-    pygame.mixer.Sound('dino_runner\\utils\\jump.wav')
+    pygame.mixer.Sound('dino_runner/utils/jump.wav')
     ]
 
 CLOUD = pygame.image.load(os.path.join(IMG_DIR, 'Other/Cloud.png'))
