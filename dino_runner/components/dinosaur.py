@@ -44,11 +44,11 @@ class Dinosaur(Sprite):
             self.dino_duck = False
         
         if user_input[pygame.K_DOWN]:
-               
-            self.dino_duck = False
 
-            if self.dino_rect.y < 120:
-                self.jump_speed -= 1  
+            if self.dino_rect.y < 310:
+                self.dino_duck = False
+                if self.dino_rect.y < 130:
+                    self.jump_speed -= 1
 
 
             elif self.dino_rect.y == 310 or self.dino_rect.y == 350:
@@ -90,6 +90,7 @@ class Dinosaur(Sprite):
     def jump(self):
         self.image = JUMPING
         self.dino_rect.y -= self.jump_speed * 4
+        print(self.dino_rect.y)
         self.jump_speed -= 0.8
 
         if self.jump_speed < -self.JUMP_SPEED:
@@ -100,3 +101,5 @@ class Dinosaur(Sprite):
 
     def draw(self,screen):
         screen.blit(self.image,(self.dino_rect.x,self.dino_rect.y))
+        
+        
