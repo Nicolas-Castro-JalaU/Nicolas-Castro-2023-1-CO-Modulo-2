@@ -15,7 +15,12 @@ IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 ICON = pygame.image.load(os.path.join(IMG_DIR, "DinoWallpaper.png"))
 
 DINO_3D = [
-    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "run.jpg")), (450, 500))
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "run.jpg")), (350, 400)),
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "lose1.jpg")), (350, 400)),
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "lose.jpg")), (350, 400)),
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "new_record.jpg")), (350, 400)),   
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "so_close.jpg")), (350, 400))
+
 
 ]
 
@@ -70,7 +75,12 @@ BIRD = [
 ]
 
 SOUNDS = [
-    pygame.mixer.Sound('dino_runner/utils/jump.wav')
+    pygame.mixer.Sound('dino_runner/utils/jump.wav'),
+    pygame.mixer.Sound('dino_runner/utils/score.wav'),
+    pygame.mixer.Sound('dino_runner/utils/in_game.wav'),
+    pygame.mixer.Sound('dino_runner/utils/open_menu.wav')
+
+    
     ]
 
 CLOUD = pygame.image.load(os.path.join(IMG_DIR, 'Other/Cloud.png'))
