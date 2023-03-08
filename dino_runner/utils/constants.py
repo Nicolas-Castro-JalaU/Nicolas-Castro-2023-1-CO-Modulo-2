@@ -14,6 +14,11 @@ IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 # Assets Constants
 ICON = pygame.image.load(os.path.join(IMG_DIR, "DinoWallpaper.png"))
 
+DINO_3D = [
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "run.jpg")), (450, 500))
+
+]
+
 RUNNING = [
     pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoRun1.png")),
     pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoRun2.png")),
@@ -79,4 +84,4 @@ HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 DEFAULT_TYPE = "default"
 
 
-FONT_STYLE = "freessansbold.ttf"
+FONT_STYLE = "/home/nick/.local/share/fonts/Unknown Vendor/TrueType/Dinosaur/Dinosaur_Regular.ttf"
