@@ -15,11 +15,11 @@ IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 ICON = pygame.image.load(os.path.join(IMG_DIR, "DinoWallpaper.png"))
 
 DINO_3D = [
-    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "run.jpg")), (350, 400)),
-    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "lose1.jpg")), (350, 400)),
-    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "lose.jpg")), (350, 400)),
-    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "new_record.jpg")), (350, 400)),   
-    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "so_close.jpg")), (350, 400))
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "run.jpg")), (250, 300)),
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "lose1.jpg")), (250, 300)),
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "lose.jpg")), (250, 300)),
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "new_record.jpg")), (250, 300)),   
+    pygame.transform.scale(pygame.image.load(os.path.join(IMG_DIR, "so_close.jpg")), (250, 300))
 
 
 ]
@@ -85,7 +85,10 @@ SOUNDS = [
 
 CLOUD = pygame.image.load(os.path.join(IMG_DIR, 'Other/Cloud.png'))
 SHIELD = pygame.image.load(os.path.join(IMG_DIR, 'Other/shield.png'))
-HAMMER = pygame.image.load(os.path.join(IMG_DIR, 'Other/hammer.png'))
+HAMMER = [pygame.image.load(os.path.join(IMG_DIR, 'Other/hammer.png')),
+          pygame.image.load(os.path.join(IMG_DIR, 'Other/hammer1.png')),
+          pygame.image.load(os.path.join(IMG_DIR, 'Other/hammer2.png')),
+          pygame.image.load(os.path.join(IMG_DIR, 'Other/hammer3.png'))]
 
 BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
@@ -95,3 +98,7 @@ DEFAULT_TYPE = "default"
 
 
 FONT_STYLE = "/home/nick/.local/share/fonts/Unknown Vendor/TrueType/Dinosaur/Dinosaur_Regular.ttf"
+
+SHIELD_TYPE = "shield"
+
+HAMMER_TYPE = "hammer"

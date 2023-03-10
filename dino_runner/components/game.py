@@ -3,11 +3,12 @@ import random
 
 
 from pygame import mixer  
-from dino_runner.utils.constants import BG, CLOUD,SOUNDS,DINO_3D,ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE
+from dino_runner.utils.constants import HEART,DEFAULT_TYPE,BG, CLOUD,SOUNDS,DINO_3D,ICON, SHIELD, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE
 from dino_runner.components.dinosaur import Dinosaur
-from dino_runner.components.obstacles.bird import Bird
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.menu import Menu 
+from dino_runner.components.counter import Counter
+from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 
 
 
@@ -31,59 +32,42 @@ class Game:
         self.y_pos_cloud = [140,220,250,110,240,290]
         self.alt = 0
         self.alt2 = 4
-        self.player = Dinosaur()
+        self.time_to_show = 0
+        self.player = Dinosaur(Game)
         self.obstacle_manager = ObstacleManager()
-        self.menu = Menu("press any key to start...",self.screen)
+        self.menu = Menu(self.screen)
         self.running = False
-        self.score = 0
-        self.best_score = 0
-        self.death_count = 0
         self.score_count = self.COUNT_SCORE
-
-    def add_counter(self):
-        
-        if self.music:
-            SOUNDS[3].play(-1)
-
-        if self.score == self.score_count:
-            self.score_count = self.score_count + self.COUNT_SCORE
-            SOUNDS[1].play()
-   
-        if not self.playing and self.score > self.best_score:
-            self.death_count =+ 1
-            self.best_score = self.score
+        self.score = Counter()
+        self.death_count = Counter()
+        self.highest_score = Counter()
+        self.power_up_manager = PowerUpManager()
 
     def execute(self):
-        self.add_counter()
+        SOUNDS[3].play()
         self.music = False
         self.running = True
         while self.running:
             if not self.playing:
-                SOUNDS[3].set_volume(1.0)
+                SOUNDS[3].set_volume(0.0)
                 self.show_menu()
         pygame.display.quit()
         pygame.quit()
 
-    def reset_counters(self):
-
-        self.obstacle_manager.reset_obstacles()
-        #self.player.reset_dino()
-        self.game_speed = self.GAME_SPEED
-        self.score = 0
-
     def run(self):
+        self.death_count.update(self)
+        self.reset_game()
         # Game loop: events - update - draw
-        SOUNDS[3].set_volume(1.0)
-        self.add_counter()
-        self.reset_counters()
         self.playing = True
         while self.playing:
             actual_volume = SOUNDS[3].get_volume()
             if SOUNDS[3].get_volume() >= actual_volume:
-                SOUNDS[3].set_volume(0.4)
+                SOUNDS[3].set_volume(0.0)
             self.events()
             self.update()
             self.draw()
+        self.time_to_show = 0
+        
 
     def events(self):
         for event in pygame.event.get():
@@ -91,13 +75,16 @@ class Game:
                 self.playing = False
 
     def update(self):
-        self.add_counter()
         user_input = pygame.key.get_pressed()
-        self.player.update(user_input)
+        self.player.update(user_input,self)
         self.obstacle_manager.update(self)
-        self.update_score()
+        self.power_up_manager.update(self)
+        self.score.update(self)
+        self.update_score()    
 
-        
+    def night(self):
+        if self.score_count > 200:
+            self.screen.fill((0, 0, 0))
 
     def draw(self):
         self.clock.tick(FPS)
@@ -106,8 +93,15 @@ class Game:
         self.draw_cloud()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
-        self.draw_score()
-        self.draw_best_score()
+        self.power_up_manager.draw(self.screen)
+        self.screen.blit(HEART,(100,20))
+        self.screen.blit(HEART,(60,20))
+        self.screen.blit(HEART,(20,20))
+
+
+        self.draw_power_up_time()
+        self.score.draw(self.screen,"SCORE")
+        self.highest_score.draw(self.screen,"BEST",880)
         pygame.display.update()
         pygame.display.flip()
 
@@ -134,72 +128,79 @@ class Game:
         
 
     def show_menu(self):
-        
+        self.time_to_show = 0
         self.menu.reset_screen_color(self.screen)
-        half_screen_height = -20
-        half_screen_width = 350
+        half_screen_height = SCREEN_HEIGHT // 2
+        half_screen_width = SCREEN_WIDTH // 2
         self.aprox = 0
+        
+        if self.death_count.count == 0:
+            self.menu.draw(self.screen, 'PRESS ANY KEY TO START.',half_screen_width,460)
+            self.screen.blit(DINO_3D[0],(400,40))
+        else:
+            self.menu.draw(self.screen, 'GAME OVER',half_screen_width,20)
+            self.menu.draw(self.screen, f'YOUR SCORE: {self.score.count}', half_screen_width, 420 )
+            self.menu.draw(self.screen, f'BEST SCORE: {self.highest_score.count}', half_screen_width, 460 )
+            self.menu.draw(self.screen, f'DEATHS: {self.death_count.count}', half_screen_width, 500 )
 
-        if self.death_count == 0:
-            self.menu.draw(self.screen,self)
-            self.screen.blit(DINO_3D[0],(half_screen_width, half_screen_height))
+            if self.score.count > self.highest_score.count:
+               self.aprox = self.score.count - self.highest_score.count
 
-        elif self.death_count > 0:
-                
-            self.menu.print_score(f"YOUR SCORE:{self.score}")
-            self.menu.draw(self.screen,self)
-            self.menu.print_death_count(f"DEATH:{self.death_count}")
-            self.menu.draw(self.screen,self)
-
-            if self.score > self.best_score:
-                self.aprox = self.score - self.best_score
             else:
-                self.aprox = self.best_score - self.score 
 
-            if self.score > self.best_score:
-                self.menu.print_new_record("NEW RECORD!")
-                self.menu.draw(self.screen,self)
-                self.menu.print_best_score(f"LAST BEST SCORE:{self.best_score}")
-                self.menu.draw(self.screen,self)
-                self.screen.blit(DINO_3D[3],(half_screen_width, half_screen_height))
+                self.aprox = self.highest_score.count - self.score.count
 
-            elif self.score > 0 and self.score < 500:  
-                self.menu.print_best_score(f"BEST SCORE:{self.best_score}")
-                self.menu.draw(self.screen,self)
-                self.screen.blit(DINO_3D[1],(half_screen_width, half_screen_height))
+            if self.score.count >= self.highest_score.count:
+                self.screen.blit(DINO_3D[3],(400,40))
+                self.menu.draw(self.screen, f'NEW RECORD', half_screen_width, 360 )
 
-            elif self.score > 500 and self.score < 1000:
-                self.menu.print_best_score(f"BEST SCORE:{self.best_score}")
-                self.menu.draw(self.screen,self)
-                self.screen.blit(DINO_3D[2],(half_screen_width, half_screen_height))
+            elif self.score.count > 0 and self.score.count < 500:
+                if self.aprox < 100:
+                    self.screen.blit(DINO_3D[4],(400,40))
+                    self.menu.draw(self.screen, f'SO CLOSE', half_screen_width, 360)
 
-            elif self.aprox < 100:
-                self.menu.print_new_record("SO CLOSE..")
-                self.menu.draw(self.screen,self)
-                self.menu.print_best_score(f"BEST SCORE:{self.best_score}")
-                self.menu.draw(self.screen,self)
-                self.screen.blit(DINO_3D[4],(half_screen_width, half_screen_height))
+                else:
+                    self.screen.blit(DINO_3D[1],(400,40))
+                    self.menu.draw(self.screen, f'SO BAD', half_screen_width, 360)
+
+
+            elif self.score.count > 500 and self.score.count < 1000:
+                if self.aprox < 100:
+                    self.screen.blit(DINO_3D[4],(400,40))
+                    self.menu.draw(self.screen, f'SO CLOSE', half_screen_width, 360)
+                else:
+                    self.screen.blit(DINO_3D[2],(400,40))
+                    self.menu.draw(self.screen, f'SO BAD', half_screen_width, 360)
+
 
         self.menu.update(self)
-
-
-    
+        self.update_highest_score()
+            
     def update_score(self):
-        self.score += 1
-        if self.score % 1000 == 0 and self.game_speed < 500:
-            self.game_speed += 1
+        if self.score.count % 100 == 0 and self.game_speed < 100:
+            self.game_speed += 0.8
+        
+    def update_highest_score(self):
+        if self.score.count > self.highest_score.count:
+            self.highest_score.set_count(self.score.count)
 
+    def reset_game(self):
+        self.obstacle_manager.reset_obstacles()
+        self.power_up_manager.reset_power_ups()
+        self.time_to_show = 0 
+        self.score.reset()
+        self.game_speed = self.GAME_SPEED
+        self.player.reset()
 
-    def draw_score(self):
-        font = pygame.font.Font(FONT_STYLE, 20)
-        text = font.render(f"SCORE:{self.score}",True,(0,0,0))
-        text_rect = text.get_rect()
-        text_rect.center = (1000,50)
-        self.screen.blit(text,text_rect)
+    def draw_power_up_time(self):
 
-    def draw_best_score(self):
-        font = pygame.font.Font(FONT_STYLE, 20)
-        text = font.render(f"BEST:{self.best_score}",True,(0,0,0))
-        text_rect = text.get_rect()
-        text_rect.center = (880,50)
-        self.screen.blit(text,text_rect)
+        if self.player.has_power_up:
+            self.time_to_show = round((self.player.power_time_up - pygame.time.get_ticks()) / 1000 , 2 )
+
+            if self.time_to_show > 0 and self.running:
+                self.menu.draw(self.screen,f"{self.player.type.capitalize()} ENABLE FOR {self.time_to_show} SECONDS",500,50)
+        
+            else:
+                self.time_to_show = 0
+                self.has_power_up = False
+                self.player.type = DEFAULT_TYPE
